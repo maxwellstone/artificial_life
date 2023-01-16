@@ -3,6 +3,14 @@ import pybullet as p
 import pyrosim.pyrosim as pyrosim
 import time
 import numpy
+import random
+
+amplitudeBackLeg = numpy.pi / 4
+frequencyBackLeg = 10
+phaseOffsetBackLeg = -numpy.pi / 8
+amplitudeFrontLeg = numpy.pi / 8
+frequencyFrontLeg = 10
+phaseOffsetFrontLeg = 0
 
 physicsClient = p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
@@ -24,7 +32,25 @@ for i in range(1000):
     backLegSensorValues[i] = pyrosim.Get_Touch_Sensor_Value_For_Link("BackLeg")
     frontLegSensorValues[i] = pyrosim.Get_Touch_Sensor_Value_For_Link("FrontLeg")
 
-    time.sleep(1 / 60)
+    targetAnglesBackLeg = amplitudeBackLeg * numpy.sin(frequencyBackLeg * numpy.linspace(0, 2 * numpy.pi, 1000) + phaseOffsetBackLeg)
+    targetAnglesFrontLeg = amplitudeFrontLeg * numpy.sin(frequencyFrontLeg * numpy.linspace(0, 2 * numpy.pi, 1000) + phaseOffsetFrontLeg)
+
+    pyrosim.Set_Motor_For_Joint(
+        bodyIndex = robotId,
+        jointName = b'Torso_BackLeg',
+        controlMode = p.POSITION_CONTROL,
+        targetPosition = targetAnglesBackLeg[i],
+        maxForce = 20
+    )
+    pyrosim.Set_Motor_For_Joint(
+        bodyIndex = robotId,
+        jointName = b'Torso_FrontLeg',
+        controlMode = p.POSITION_CONTROL,
+        targetPosition = targetAnglesFrontLeg[i],
+        maxForce = 20
+    )
+
+    time.sleep(1 / 1000)
 
 p.disconnect()
 
