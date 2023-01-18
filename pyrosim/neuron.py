@@ -6,6 +6,8 @@ import pyrosim.pyrosim as pyrosim
 
 import pyrosim.constants as c
 
+from pyrosim.synapse import SYNAPSE
+
 class NEURON: 
 
     def __init__(self,line):
@@ -69,8 +71,13 @@ class NEURON:
     def Update_Sensor_Neuron(self):
         self.Set_Value(pyrosim.Get_Touch_Sensor_Value_For_Link(self.Get_Link_Name()))
 
-    def Update_Hidden_Or_Motor_Neuron(self):
+    def Update_Hidden_Or_Motor_Neuron(self, neurons: dict[str, 'NEURON'], synapses: dict[tuple[str, str], SYNAPSE]):
         self.Set_Value(0)
+        for p, s in synapses.items():
+            if(p[1] == self.Get_Name()):
+                self.Add_To_Value(s.Get_Weight() * neurons[p[0]].Get_Value())
+                
+        self.Threshold()
 
 # -------------------------- Private methods -------------------------
 

@@ -34,7 +34,6 @@ class Robot:
         # Update motors
         for n in self.nn.neurons.values():
             if n.Is_Motor_Neuron():
-                print(n.Get_Name(), n.Get_Joint_Name(), n.Get_Value())
                 self.motors[n.Get_Joint_Name().encode()].update(n.Get_Value())
 
     def save(self):

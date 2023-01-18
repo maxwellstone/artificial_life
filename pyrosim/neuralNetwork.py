@@ -33,7 +33,7 @@ class NEURAL_NETWORK:
             if n.Is_Sensor_Neuron():
                 n.Update_Sensor_Neuron()
             else:
-                n.Update_Hidden_Or_Motor_Neuron()
+                n.Update_Hidden_Or_Motor_Neuron(self.neurons, self.synapses)
 
 # ---------------- Private methods --------------------------------------
 
