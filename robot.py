@@ -5,6 +5,8 @@ from pyrosim.neuralNetwork import NEURAL_NETWORK
 from sensor import Sensor
 from motor import Motor
 
+import constants as c
+
 class Robot:
     def __init__(self, body_file: str, brain_file: str):
         # Initialize the robot
@@ -34,7 +36,7 @@ class Robot:
         # Update motors
         for n in self.nn.neurons.values():
             if n.Is_Motor_Neuron():
-                self.motors[n.Get_Joint_Name().encode()].update(n.Get_Value())
+                self.motors[n.Get_Joint_Name().encode()].update(n.Get_Value() * c.JOINT_RANGE)
 
     def fitness(self) -> float:
         return pb.getLinkState(self.id, 0)[0][0]
