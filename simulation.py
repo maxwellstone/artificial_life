@@ -8,15 +8,13 @@ from world import World
 from robot import Robot
 
 class Simulation:
-    def __init__(self, mode_arg: str, time_arg: str):
-        mode = pb.DIRECT
+    def __init__(self, mode_arg: str):
+        self.mode = pb.DIRECT
         if mode_arg == "GUI":
-            mode = pb.GUI
-        
-        self.use_time = time_arg.startswith("y")
+            self.mode = pb.GUI
 
         # Start pybullet
-        pb.connect(mode)
+        pb.connect(self.mode)
         pb.setAdditionalSearchPath(pybullet_data.getDataPath())
 
         # Create scene
@@ -43,7 +41,7 @@ class Simulation:
             self.fitness()
 
             # Try to get each frame to take the same amount of time
-            if self.use_time:
+            if self.mode == pb.GUI:
                 time.sleep(max(c.FRAME_TIME - (time.time() - time_start), 0))
 
             step += 1

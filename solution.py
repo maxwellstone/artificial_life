@@ -9,12 +9,12 @@ class Solution:
         self.weights = np.random.rand(3, 2) * 2 - 1
         self.fitness = 0
 
-    def evaluate(self, show: bool = False, time: bool = False):
+    def evaluate(self, show: bool = False):
         self.create_world()
         self.create_body()
         self.create_brain()
 
-        os.system("python simulate.py " + ("GUI" if show else "DIRECT") + " " + ("y" if time else "n"))
+        os.system("python simulate.py " + ("GUI" if show else "DIRECT"))
 
         file = open("fitness.txt", "r")
         self.fitness = float(file.read())
