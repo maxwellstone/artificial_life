@@ -36,6 +36,9 @@ class Robot:
             if n.Is_Motor_Neuron():
                 self.motors[n.Get_Joint_Name().encode()].update(n.Get_Value())
 
+    def fitness(self) -> float:
+        return pb.getLinkState(self.id, 0)[0][0]
+
     def save(self):
         for sensor in self.sensors.values():
             sensor.save()
