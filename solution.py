@@ -1,39 +1,44 @@
 import pyrosim.pyrosim as pr
 import numpy as np
 import random
-
+import time
 import os
 
 class Solution:
-    def __init__(self):
+    def __init__(self, id: int):
+        self.id = id
         self.weights = np.random.rand(3, 2) * 2 - 1
         self.fitness = 0
 
-    def evaluate(self, show: bool = False):
-        self.create_world()
-        self.create_body()
-        self.create_brain()
+    def simulate(self, show: bool):
+        self.create_brain("brain" + str(self.id) + ".nndf")
 
-        os.system("python simulate.py " + ("GUI" if show else "DIRECT"))
+        os.system(("" if show else "start /B ") + "python simulate.py " + ("GUI" if show else "DIRECT") + " " + str(self.id))
 
-        file = open("fitness.txt", "r")
-        self.fitness = float(file.read())
+    def evaluate(self):
+        fitness_file = "fitness" + str(self.id) + ".txt"
+        
+        while not os.path.exists(fitness_file):
+            time.sleep(0.01)
+
+        file = open(fitness_file, "r")
+        try:
+            self.fitness = float(file.read())
+        except:
+            pass
         file.close()
+
+        # Clean up files
+        os.remove("brain" + str(self.id) + ".nndf")
+        os.remove(fitness_file)
 
     def mutate(self):
         i = random.randint(0, 2)
         j = random.randint(0, 1)
         self.weights[i][j] = random.random() * 2 - 1
 
-    def create_world(self):
-        pr.Start_SDF("world.sdf")
-
-        pr.Send_Cube(name="Box", pos=[-3, 3, 0.5], size=[1, 1, 1])
-
-        pr.End()
-
-    def create_body(self):
-        pr.Start_URDF("body.urdf")
+    def create_body(self, filename: str):
+        pr.Start_URDF(filename)
 
         pr.Send_Cube(name="Torso", pos=[1.5, 0, 1.5], size=[1, 1, 1])
         pr.Send_Joint(name="Torso_BackLeg", parent="Torso", child ="BackLeg", type="revolute", position=[1, 0, 1])
@@ -43,8 +48,8 @@ class Solution:
 
         pr.End()
 
-    def create_brain(self):
-        pr.Start_NeuralNetwork("brain.nndf")
+    def create_brain(self, filename: str):
+        pr.Start_NeuralNetwork(filename)
 
         pr.Send_Sensor_Neuron(name = 0, linkName = "Torso")
         pr.Send_Sensor_Neuron(name = 1, linkName = "BackLeg")

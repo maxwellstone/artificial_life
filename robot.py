@@ -6,9 +6,9 @@ from sensor import Sensor
 from motor import Motor
 
 class Robot:
-    def __init__(self):
+    def __init__(self, body_file: str, brain_file: str):
         # Initialize the robot
-        self.id = pb.loadURDF("body.urdf")
+        self.id = pb.loadURDF(body_file)
         pr.Prepare_To_Simulate(self.id)
 
         # Create sensors
@@ -21,7 +21,7 @@ class Robot:
         for name in pr.jointNamesToIndices:
             self.motors[name] = Motor(self, name)
 
-        self.nn = NEURAL_NETWORK("brain.nndf")
+        self.nn = NEURAL_NETWORK(brain_file)
 
     def update(self, step: int):
         # Update sensors

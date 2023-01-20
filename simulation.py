@@ -1,6 +1,7 @@
 import pybullet as pb
 import pybullet_data
 import time
+import os
 
 import constants as c
 
@@ -8,10 +9,12 @@ from world import World
 from robot import Robot
 
 class Simulation:
-    def __init__(self, mode_arg: str):
+    def __init__(self, mode_arg: str, id_arg: int):
         self.mode = pb.DIRECT
         if mode_arg == "GUI":
             self.mode = pb.GUI
+        
+        self.soln_id = id_arg
 
         # Start pybullet
         pb.connect(self.mode)
@@ -19,7 +22,7 @@ class Simulation:
 
         # Create scene
         self.world = World()
-        self.robot = Robot()
+        self.robot = Robot("body.urdf", "brain" + str(self.soln_id) + ".nndf")
 
         # Set scene forces
         pb.setGravity(c.GRAVITY_X, c.GRAVITY_Y, c.GRAVITY_Z)
@@ -38,15 +41,15 @@ class Simulation:
 
             self.robot.update(step)
 
-            self.fitness()
-
             # Try to get each frame to take the same amount of time
             if self.mode == pb.GUI:
                 time.sleep(max(c.FRAME_TIME - (time.time() - time_start), 0))
 
             step += 1
-
-    def fitness(self):
-        file = open("fitness.txt", "w")
-        file.write(str(self.robot.fitness()))
-        file.close()
+        
+        # Write fitness to file
+        if(pb.getConnectionInfo()['isConnected']):
+            file = open("tmp_fitness" + str(self.soln_id) + ".txt", "w")
+            file.write(str(self.robot.fitness()))
+            file.close()
+            os.rename("tmp_fitness" + str(self.soln_id) + ".txt", "fitness" + str(self.soln_id) + ".txt")
