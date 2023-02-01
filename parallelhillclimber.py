@@ -37,10 +37,10 @@ class ParallelHillClimber:
                 print(str(i) + ": " + str(parent.fitness) + " | " + str(child.fitness))
 
                 # Pick most fit
-                if(child.fitness < parent.fitness):
+                if(child.fitness > parent.fitness):
                     self.parents[i] = child
             print("")
 
-        best = min(self.parents, key = lambda parent: parent.fitness)
+        best = max(self.parents, key = lambda parent: parent.fitness)
         print("Best: " + str(best.fitness) + "\n")
         best.simulate(True)

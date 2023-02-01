@@ -39,7 +39,10 @@ class Robot:
                 self.motors[n.Get_Joint_Name().encode()].update(n.Get_Value() * c.JOINT_RANGE)
 
     def fitness(self) -> float:
-        return pb.getLinkState(self.id, 0)[0][0]
+        po = pb.getBasePositionAndOrientation(self.id)
+        pos = po[0]
+        # Squared distance
+        return pos[0] * pos[0] + pos[1] * pos[1] + pos[2] * pos[2]
 
     def save(self):
         for sensor in self.sensors.values():
