@@ -4,4 +4,4 @@ This simulation features a monoped robot trying to hop around through its enviro
 
 ## Fitness
 
-The fitness function used to evolve the robot to exhibit such behavior is the squared distance of the torso from the origin (see [here](robot.py#41-45)).
+The fitness function used to evolve the robot to exhibit such behavior is the squared distance of the torso from the origin (see [here](robot.py#L41-L45)).
