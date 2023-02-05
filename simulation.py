@@ -22,7 +22,7 @@ class Simulation:
 
         # Create scene
         self.world = World()
-        self.robot = Robot("body.urdf", "brain" + str(self.soln_id) + ".nndf")
+        self.robot = Robot("body" + str(self.soln_id) + ".urdf", "brain" + str(self.soln_id) + ".nndf")
 
         # Set scene forces
         pb.setGravity(c.GRAVITY_X, c.GRAVITY_Y, c.GRAVITY_Z)

@@ -4,16 +4,39 @@ import random
 import time
 import os
 
+from part import Part
+from joint import Joint
+
 import constants as c
 
 class Solution:
     def __init__(self, id: int):
         self.id = id
-        self.weights = np.random.rand(c.SENSOR_NEURON_COUNT, c.MOTOR_NEURON_COUNT) * 2 - 1
         self.fitness = 0
 
+        # Body
+        self.parts = []
+        self.joints = []
+        self.sensors = [] # part indices
+        
+        chain_size = random.randint(5, 10)
+        self.parts.append(Part("root", [0, 0, 1.0], (np.random.rand(3) + 1) * 0.5, bool(random.randint(0, 1))))
+        for i in range(1, chain_size):
+            parent = self.parts[-1]
+            size = (np.random.rand(3) + 1) * 0.5
+            child = Part(str(i), [0, size[1] / 2, 0], size, bool(random.randint(0, 1)))
+            self.parts.append(child)
+            self.joints.append(Joint(parent, child, [parent.pos[0], parent.pos[1] + parent.size[1] / 2, parent.pos[2]], Joint.AXIS_X))
+
+        for i in range(len(self.parts)):
+            if self.parts[i].sensor:
+                self.sensors.append(i)
+
+        # Brain
+        self.weights = np.random.rand(len(self.sensors), len(self.joints)) * 2 - 1
+
     def simulate(self, show: bool):
-        self.create_body("body.urdf", [0, 0, 1])
+        self.create_body("body" + str(self.id) + ".urdf")
         self.create_brain("brain" + str(self.id) + ".nndf")
 
         os.system(("" if show else "start /B ") + "python simulate.py " + ("GUI" if show else "DIRECT") + " " + str(self.id))
@@ -33,52 +56,52 @@ class Solution:
             pass
 
         # Clean up files
+        os.remove("body" + str(self.id) + ".urdf")
         os.remove("brain" + str(self.id) + ".nndf")
         os.remove(fitness_file)
 
     def mutate(self):
-        i = random.randint(0, c.SENSOR_NEURON_COUNT - 1)
-        j = random.randint(0, c.MOTOR_NEURON_COUNT - 1)
+        i = random.randint(0, len(self.sensors) - 1)
+        j = random.randint(0, len(self.joints) - 1)
         self.weights[i][j] = random.random() * 2 - 1
 
-    def create_body(self, filename: str, pos: list[float]):
+    def create_body(self, filename: str):
         pr.Start_URDF(filename)
 
-        pr.Send_Cube(name = "A", pos = pos, size = [1, 1, 1])
+        # Add parts
+        for part in self.parts:
+            color = [0, 1, 0, 1] if part.sensor else [0, 0, 1, 1]
+            pr.Send_Cube(name = part.name, pos = part.pos, size = part.size, rgba = color)
 
-        pr.Send_Joint(name = "A_B1", parent = "A", child = "B1", type = "revolute", position = [pos[0], pos[1] - 0.5, pos[2]], joint_axis = "0 1 0")
-        pr.Send_Cube(name = "B1", pos = [0, -0.5, 0], size = [0.2, 1, 0.2])
-        pr.Send_Joint(name = "B1_B2", parent = "B1", child = "B2", type = "revolute", position = [0, -1, 0], joint_axis = "1 0 0")
-        pr.Send_Cube(name = "B2", pos = [0, 0, -0.5], size = [0.2, 0.2, 1])
-        
-        pr.Send_Joint(name = "A_C1", parent = "A", child = "C1", type = "revolute", position = [pos[0], pos[1] + 0.5, pos[2]], joint_axis = "0 1 0")
-        pr.Send_Cube(name = "C1", pos = [0, 0.5, 0], size = [0.2, 1, 0.2])
-        pr.Send_Joint(name = "C1_C2", parent = "C1", child = "C2", type = "revolute", position = [0, 1, 0], joint_axis = "1 0 0")
-        pr.Send_Cube(name = "C2", pos = [0, 0, -0.5], size = [0.2, 0.2, 1])
-
-        pr.Send_Joint(name = "A_D", parent = "A", child = "D", type = "revolute", position = [pos[0], pos[1], pos[2] - 0.5], joint_axis = "0 1 0")
-        pr.Send_Cube(name = "D", pos = [0, 0, -0.25], size = [0.2, 0.2, 0.5])
+        # Add joints
+        for joint in self.joints:
+            match joint.axis:
+                case Joint.AXIS_X:
+                    axis = "1 0 0"
+                case Joint.AXIS_Y:
+                    axis = "0 1 0"
+                case Joint.AXIS_Z:
+                    axis = "0 0 1"
+            
+            pr.Send_Joint(name = joint.parent.name + "_" + joint.child.name, parent = joint.parent.name, child = joint.child.name, type = "revolute", position = joint.pos, joint_axis = axis)
 
         pr.End()
 
     def create_brain(self, filename: str):
         pr.Start_NeuralNetwork(filename)
 
-        pr.Send_Sensor_Neuron(name = 0, linkName = "A")
-        pr.Send_Sensor_Neuron(name = 1, linkName = "B1")
-        pr.Send_Sensor_Neuron(name = 2, linkName = "B2")
-        pr.Send_Sensor_Neuron(name = 3, linkName = "C1")
-        pr.Send_Sensor_Neuron(name = 4, linkName = "C2")
-        pr.Send_Sensor_Neuron(name = 5, linkName = "D")
+        # Add sensors
+        for i in range(len(self.sensors)):
+            pr.Send_Sensor_Neuron(name = i, linkName = self.parts[self.sensors[i]].name)
 
-        pr.Send_Motor_Neuron(name = 6, jointName = "A_B1")
-        pr.Send_Motor_Neuron(name = 7, jointName = "B1_B2")
-        pr.Send_Motor_Neuron(name = 8, jointName = "A_C1")
-        pr.Send_Motor_Neuron(name = 9, jointName = "C1_C2")
-        pr.Send_Motor_Neuron(name = 10, jointName = "A_D")
+        # Add motors
+        for i in range(len(self.joints)):
+            joint = self.joints[i]
+            pr.Send_Motor_Neuron(name = len(self.sensors) + i, jointName = joint.parent.name + "_" + joint.child.name)
 
-        for i in range(c.SENSOR_NEURON_COUNT):
-            for j in range(c.MOTOR_NEURON_COUNT):
-                pr.Send_Synapse(sourceNeuronName = i, targetNeuronName = c.SENSOR_NEURON_COUNT + j, weight = self.weights[i][j])
+        # Add weights
+        for i in range(len(self.sensors)):
+            for j in range(len(self.joints)):
+                pr.Send_Synapse(sourceNeuronName = i, targetNeuronName = len(self.sensors) + j, weight = self.weights[i][j])
 
         pr.End()
