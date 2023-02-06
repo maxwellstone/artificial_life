@@ -19,14 +19,23 @@ class Solution:
         self.joints = []
         self.sensors = [] # part indices
         
-        chain_size = random.randint(5, 10)
-        self.parts.append(Part("root", [0, 0, 1.0], (np.random.rand(3) + 1) * 0.5, bool(random.randint(0, 1))))
-        for i in range(1, chain_size):
-            parent = self.parts[-1]
+        part_count = random.randint(10, 15)
+        self.parts.append(Part("root", [0, 0, 2.0], (np.random.rand(3) + 1) * 0.5, bool(random.randint(0, 1))))
+        for i in range(1, part_count):
+            # Pick a random branch point
+            parent = self.parts[random.randint(0, len(self.parts) - 1)]
+
+            # Pick random branch direction
+            dir = np.zeros(3)
+            dir[random.randint(0, 2)] = random.choice([-1, 1])
+
+            # Create random child
             size = (np.random.rand(3) + 1) * 0.5
-            child = Part(str(i), [0, size[1] / 2, 0], size, bool(random.randint(0, 1)))
+            child = Part(str(i), dir * size / 2, size, bool(random.randint(0, 1)))
+
+            # Connect child
             self.parts.append(child)
-            self.joints.append(Joint(parent, child, [parent.pos[0], parent.pos[1] + parent.size[1] / 2, parent.pos[2]], Joint.AXIS_X))
+            self.joints.append(Joint(parent, child, parent.pos + dir * parent.size / 2, random.choice([Joint.AXIS_X, Joint.AXIS_Y, Joint.AXIS_Z])))
 
         for i in range(len(self.parts)):
             if self.parts[i].sensor:
@@ -74,7 +83,9 @@ class Solution:
             pr.Send_Cube(name = part.name, pos = part.pos, size = part.size, rgba = color)
 
         # Add joints
-        for joint in self.joints:
+        for i in range(len(self.joints)):
+            joint = self.joints[i]
+            
             match joint.axis:
                 case Joint.AXIS_X:
                     axis = "1 0 0"

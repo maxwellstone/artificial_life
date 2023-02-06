@@ -1,7 +1,5 @@
-# Assignment 5
+# Assignment 7
 
-This simulation features a monoped robot trying to hop around through its environment. The robot consists of a torso, two arms, each with an upper and lower part, and a single piece for a leg. The robot learns to use its one leg to propel itself forward, and uses its arms to balance and keep itself from falling down.
+This is a simulation of randomly shaped creatures. The creatures are made of a series of random parts which are connected by random joints. Each successive body part can connect to any other existing body part, which creates some interesting results. The creature can grow in any direction in 3D and has randomly placed sensors throughout the body which control its joints.
 
-## Fitness
-
-The fitness function used to evolve the robot to exhibit such behavior is the squared distance of the torso from the origin (see [here](robot.py#L41-L45)).
+See [Ludobots](https://www.reddit.com/r/ludobots)
