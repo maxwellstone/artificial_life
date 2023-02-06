@@ -1,7 +1,5 @@
-# Assignment 5
+# Assignment 6
 
-This simulation features a monoped robot trying to hop around through its environment. The robot consists of a torso, two arms, each with an upper and lower part, and a single piece for a leg. The robot learns to use its one leg to propel itself forward, and uses its arms to balance and keep itself from falling down.
+This is a simulation of randomly long snake robots. The snakes consist of randomly sized parts connected one after the other. Parts may randomly have sensors, which are indicated by green body parts, or not, which are indicated by blue body parts. For now the snakes just move randomly and don't do anything particularly interesting.
 
-## Fitness
-
-The fitness function used to evolve the robot to exhibit such behavior is the squared distance of the torso from the origin (see [here](robot.py#L41-L45)).
+See [Ludobots](https://www.reddit.com/r/ludobots)
