@@ -20,12 +20,12 @@ class Simulation:
         pb.connect(self.mode)
         pb.setAdditionalSearchPath(pybullet_data.getDataPath())
 
+        # Set scene forces
+        pb.setGravity(c.GRAVITY_X, c.GRAVITY_Y, c.GRAVITY_Z)
+
         # Create scene
         self.world = World()
         self.robot = Robot("body" + str(self.soln_id) + ".urdf", "brain" + str(self.soln_id) + ".nndf")
-
-        # Set scene forces
-        pb.setGravity(c.GRAVITY_X, c.GRAVITY_Y, c.GRAVITY_Z)
 
     def __del__(self):
         if(pb.getConnectionInfo()['isConnected']):
@@ -42,8 +42,8 @@ class Simulation:
             self.robot.update(step)
 
             # Try to get each frame to take the same amount of time
-            if self.mode == pb.GUI:
-                time.sleep(max(c.FRAME_TIME - (time.time() - time_start), 0))
+            #if self.mode == pb.GUI:
+                #time.sleep(max(c.FRAME_TIME - (time.time() - time_start), 0))
 
             step += 1
         
