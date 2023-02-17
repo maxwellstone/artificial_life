@@ -8,7 +8,7 @@ This is a simulation of randomly shaped 3D creatures. The creatures each have a 
 
 ## Morphospace
 
-Creatures consist of anywhere between 10 to 15 body segments. Each body segment is a cube with dimensions randomly ranging from 0.5 to 1.0. Each successive body part can be attached to any face of the cubes in the already existing body with a joint that rotates around the x, y, or z axis. This allows for an enormously large morphospace with relatively low complexity. One glaring restriction to the morphospace of these creatures, is that the joint graph must be a DAG. These creatures are not capable of having cyclic joint connections, which could have opened the door to some really interesting results.
+Creatures consist of anywhere between 10 to 15 body segments. Each body segment is a cube with each dimension randomly ranging from 0.5 to 1.0. Each successive body part can be attached to any face of the cubes in the already existing body with a joint that rotates around the x, y, or z axis. This allows for an enormously large morphospace with relatively low complexity. One glaring restriction to the morphospace of these creatures is that the joint graph must be a DAG. These creatures are not capable of having cyclic joint connections, which could have opened the door to some really interesting results.
 
 ![Morphospace](figures/figure1.png)
 
@@ -16,7 +16,7 @@ Here is an example of how a creature could be generated. The blue and green squa
 
 ## Brain
 
-The brain is a matrix of weights connecting the sensors to the joints. Each creature has sensors randomly spread throughout its body. Each sensor effects every joint in the creature. The brain can be represented as a complete bipartite graph of sensors and joints.
+The brain is a matrix of weights connecting the sensors to the joints. Each creature has sensors randomly spread throughout its body. Each sensor affects every joint in the creature. The brain can be represented as a complete bipartite graph of sensors and joints.
 
 ![Brain](figures/figure2.png)
 
