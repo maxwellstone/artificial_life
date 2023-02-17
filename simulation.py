@@ -19,6 +19,8 @@ class Simulation:
         # Start pybullet
         pb.connect(self.mode)
         pb.setAdditionalSearchPath(pybullet_data.getDataPath())
+        if self.mode == pb.GUI:
+            pb.configureDebugVisualizer(pb.COV_ENABLE_GUI,0)
 
         # Set scene forces
         pb.setGravity(c.GRAVITY_X, c.GRAVITY_Y, c.GRAVITY_Z)
