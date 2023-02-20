@@ -20,22 +20,30 @@ class Solution:
         self.sensors = [] # part indices
         
         part_count = random.randint(10, 15)
-        self.parts.append(Part("root", [0, 0, 2.0], (np.random.rand(3) + 1) * 0.5, bool(random.randint(0, 1))))
+        root_pos = [0, 0, 2.0]
+        self.parts.append(Part("root", root_pos, root_pos, (np.random.rand(3) + 1) * 0.5, bool(random.randint(0, 1))))
         for i in range(1, part_count):
-            # Pick a random branch point
-            parent = self.parts[random.randint(0, len(self.parts) - 1)]
+            # Keep trying until we find a suitable attachment site
+            while True:
+                # Pick a random branch point
+                parent = random.choice(self.parts)
 
-            # Pick random branch direction
-            dir = np.zeros(3)
-            dir[random.randint(0, 2)] = random.choice([-1, 1])
+                # Pick random branch direction
+                dir = np.zeros(3)
+                dir[random.randint(0, 2)] = random.choice([-1, 1])
 
-            # Create random child
-            size = (np.random.rand(3) + 1) * 0.5
-            child = Part(str(i), dir * size / 2, size, bool(random.randint(0, 1)))
+                # Created randomized child
+                size = (np.random.rand(3) + 1) * 0.5
+                world_pos = parent.world_pos + dir * ((parent.size + size) / 2)
+                child = Part(str(i), world_pos, dir * size / 2, size, bool(random.randint(0, 1)))
 
-            # Connect child
-            self.parts.append(child)
-            self.joints.append(Joint(parent, child, parent.pos + dir * parent.size / 2, random.choice([Joint.AXIS_X, Joint.AXIS_Y, Joint.AXIS_Z])))
+                # Check if the child intersects the floor or other parts
+                if world_pos[2] - size[2] >= 0 and not any(child.intersects(part) for part in self.parts):
+                    # Connect child
+                    self.parts.append(child)
+                    self.joints.append(Joint(parent, child, parent.pos + dir * parent.size / 2, random.choice([Joint.AXIS_X, Joint.AXIS_Y, Joint.AXIS_Z])))
+
+                    break
 
         for i in range(len(self.parts)):
             if self.parts[i].sensor:
