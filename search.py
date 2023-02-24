@@ -1,18 +1,18 @@
 import os
+import sys
+import numpy as np
+import random
 
 from parallelhillclimber import ParallelHillClimber
 
-# Make sure no files were left over
-os.system("del fitness*.txt")
-os.system("del tmp_fitness*.txt")
-os.system("del body*.urdf")
-os.system("del brain*.nndf")
+seed = 0
+if len(sys.argv) > 1:
+    try:
+        seed = int(sys.argv[1])
+        np.random.seed(seed)
+        random.seed(seed)
+    except:
+        pass
 
-hc = ParallelHillClimber()
+hc = ParallelHillClimber(str(seed))
 hc.evolve()
-
-# Make sure no files were left over
-os.system("del fitness*.txt")
-os.system("del tmp_fitness*.txt")
-os.system("del body*.urdf")
-os.system("del brain*.nndf")

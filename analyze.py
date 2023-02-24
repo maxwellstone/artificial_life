@@ -1,12 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-backLegSensorValues = np.load("data/backLegSensorValues.npy")
-frontLegSensorValues = np.load("data/frontLegSensorValues.npy")
+fitnesses = [np.load("fitnesses_" + str(i + 1) + ".npy") for i in range(5)]
 
-plt.plot(backLegSensorValues, linewidth = 3)
-plt.plot(frontLegSensorValues)
+for i in range(5):
+    plt.plot(fitnesses[i])
 
-plt.legend(["Back Leg", "Front Leg"])
-
-plt.show()
+    plt.show()

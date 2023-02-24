@@ -9,7 +9,7 @@ from world import World
 from robot import Robot
 
 class Simulation:
-    def __init__(self, mode_arg: str, id_arg: int):
+    def __init__(self, mode_arg: str, id_arg: str):
         self.mode = pb.DIRECT
         if mode_arg == "GUI":
             self.mode = pb.GUI
@@ -27,7 +27,7 @@ class Simulation:
 
         # Create scene
         self.world = World()
-        self.robot = Robot("body" + str(self.soln_id) + ".urdf", "brain" + str(self.soln_id) + ".nndf")
+        self.robot = Robot("body" + self.soln_id + ".urdf", "brain" + self.soln_id + ".nndf")
 
     def __del__(self):
         if(pb.getConnectionInfo()['isConnected']):
@@ -51,7 +51,7 @@ class Simulation:
         
         # Write fitness to file
         if(pb.getConnectionInfo()['isConnected']):
-            file = open("tmp_fitness" + str(self.soln_id) + ".txt", "w")
+            file = open("tmp_fitness" + self.soln_id + ".txt", "w")
             file.write(str(self.robot.fitness()))
             file.close()
-            os.rename("tmp_fitness" + str(self.soln_id) + ".txt", "fitness" + str(self.soln_id) + ".txt")
+            os.rename("tmp_fitness" + self.soln_id + ".txt", "fitness" + self.soln_id + ".txt")

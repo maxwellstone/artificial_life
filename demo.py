@@ -1,6 +1,10 @@
+import os
+
 from solution import Solution
 
-for i in range(10):
-    s = Solution(0)
-    s.simulate(True)
-    s.evaluate()
+s = Solution("unevolved")
+s.simulate(True)
+s.evaluate()
+
+os.system("python simulate.py GUI _evolved_5")
+os.remove("fitness_evolved_5.txt")
