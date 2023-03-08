@@ -20,7 +20,7 @@ class Solution:
         self.joints = []
         self.sensors = [] # part indices
         
-        part_count = random.randint(10, 15)
+        part_count = random.randint(5, 10)
         root_pos = [0, 0, 2.0]
         self.parts.append(Part("root", root_pos, root_pos, (np.random.rand(3) + 1) * 0.5, bool(random.randint(0, 1))))
         for _ in range(1, part_count):
@@ -133,7 +133,7 @@ class Solution:
                 self.weights = np.concatenate((self.weights, np.random.rand(self.weights.shape[0], len(joints))), axis = 1)
 
                 self.update_sensors()
-        else:
+        elif self.sensors and self.joints:
             # Mutate brain
             i = random.randint(0, len(self.sensors) - 1)
             j = random.randint(0, len(self.joints) - 1)

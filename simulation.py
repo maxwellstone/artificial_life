@@ -44,8 +44,8 @@ class Simulation:
             self.robot.update(step)
 
             # Try to get each frame to take the same amount of time
-            # if self.mode == pb.GUI:
-            #     time.sleep(max(c.FRAME_TIME - (time.time() - time_start), 0))
+            if self.mode == pb.GUI:
+                time.sleep(max(c.FRAME_TIME - (time.time() - time_start), 0))
 
             step += 1
         
