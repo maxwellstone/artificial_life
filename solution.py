@@ -69,7 +69,10 @@ class Solution:
         self.save_body("body" + self.id + ".urdf")
         self.save_brain("brain" + self.id + ".nndf")
 
-        os.system(("" if show else "start /B ") + "python simulate.py " + ("GUI" if show else "DIRECT") + " " + self.id)
+        if os.name == "nt":
+            os.system(("" if show else "start /B ") + "python simulate.py " + ("GUI" if show else "DIRECT") + " " + self.id)
+        else:
+            os.system("python simulate.py " + ("GUI" if show else "DIRECT") + " " + self.id + ("" if show else " &"))
 
     def evaluate(self):
         fitness_file = "fitness" + self.id + ".txt"
