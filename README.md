@@ -56,6 +56,10 @@ In the example in the figure, at generation 6 the creature loses a terminal body
 
 Comparisons of random, unevolved creatures, and the evolved creatures can be made by running the demo (see [here](#running-the-project)). Creatures were trained using random seeds 1-10, and the highest fitness of each creature was tracked accross generations. Each training session had a population size of 10, generation count of 500, and the creatures were simulated for 2000 time steps.
 
+![Fitness](figures/fitness.png)
+
+The creature with the overall highest fitness, is the creature evolved from seed 5. It is the hopping monoped in the gif above.
+
 ![Seed 1](figures/fitness1.png)
 
 ![Seed 2](figures/fitness2.png)
