@@ -23,6 +23,3 @@ else:
     s = Solution("unevolved")
     s.simulate(True)
     s.evaluate()
-
-    for i in range(10):
-        run("_evolved_" + str(i + 1))
